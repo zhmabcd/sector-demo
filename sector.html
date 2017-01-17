@@ -1,0 +1,148 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+	<title>无标题文档</title>
+	<script src="dojo.js"></script>
+	<link rel="stylesheet" href="onclick.js" />
+	<style type="text/css" >
+		#div1{
+			color:#A6A6FF
+			width:200px;
+			height:800px;
+			background:#0000FF}
+		</style>
+	</head>
+	<body style="background-image: url('location-bg.png');">
+		<canvas id="myCanvas" style="margin:0px;border:1px solid #c3c3c3" width="1000" height="1000" ;background-color:black ;>
+			<script type="text/javascript">
+				var c=document.getElementById("myCanvas");	
+				var ctx=c.getContext("2d");
+
+				var x=500;
+				var y=500;
+				var r=30;
+				var a=10;
+				var b=10;
+				var d=1;
+				var ii=Math.PI*2/12;
+				var jj=Math.PI*2/6;
+				var locname=new Array('SH','DL','WH','TW','CD','SZ');
+
+				ctx.fillStyle="#000000";
+				ctx.font = "20px bolder ";
+
+				function init() {
+
+					drawsCanvas();
+					timer1=setInterval(moveSectors, 120);	 
+				}
+				function init2(){
+					clearInterval(timer1);
+					drawsCanvas();
+					timer2=setInterval(startMove, 60);
+				}
+
+				function drawsCanvas(){
+					var c=document.getElementById("myCanvas");	
+					var ctx=c.getContext("2d");
+					ctx.strokeStyle="#6666FF";
+					ctx.lineWidth = 2;
+
+				}
+				function clearCanvas() { 
+					ctx.clearRect(0, 0, 1000, 1000);  
+				}
+				function fontSet(){
+					ctx.fillStyle="#000000";
+					for (var i=0;i<6;i++){	  
+						ctx.fillText(locname[i],x+(a+4)*r*Math.cos(ii+jj*i),y-(a+4)*r*Math.sin(ii+jj*i));
+					}
+				}
+				function sectors(){
+					drawsCanvas();
+					for (var i=0;i<6;i++){
+						ctx.beginPath();
+						ctx.arc(x+a*r*Math.cos(ii+jj*i),y-a*r*Math.sin(ii+jj*i),6*r,-Math.PI*2*(i+1)/6,-Math.PI*2*i/6,false);
+						ctx.arc(x+a*r*Math.cos(ii+jj*i),y-a*r*Math.sin(ii+jj*i),2*r,-Math.PI*2*i/6,-Math.PI*2*(i+1)/6,true);
+						ctx.closePath();
+						ctx.fillStyle="#6666FF";
+						ctx.fill();
+					}
+				}
+				function circle (){
+					drawsCanvas();
+					ctx.beginPath();
+					ctx.arc(x,y,r+4*b,0,Math.PI*2,true);	
+					ctx.fillStyle="#6666FF";
+					ctx.fill();
+					ctx.fillStyle="#000000";
+					ctx.fillText('BJ',x-10,y+5);
+				}
+				function moveSectors(){
+					clearCanvas();
+					drawsCanvas();
+					a--;	
+					if (a<2){
+						a=1; 
+						ctx.save(); 
+						circle();
+						ctx.shadowColor="#A6A6FF";
+						ctx.shadowOffsetX=6;
+						ctx.shadowOffsetY=6;
+						clearInterval(timer1);
+					} 
+					sectors();	
+					ctx.shadowColor="#6666FF";
+					ctx.fillStyle="#000000";
+					fontSet();
+				}
+
+				function startMove(){
+					clearCanvas();
+					drawsCanvas();
+					a++;
+					if(a>7){
+						a=7;	
+						clearInterval(timer2);
+						setTimeout(function (){
+							timer1=setInterval(moveSectors, 60);	
+
+						}, 550);
+
+					}
+					sectors();	
+					fontSet();
+				}
+				init();
+				function getEventPosition(ev){
+					var x, y;
+
+					if (ev.layerX || ev.layerX == 0) {
+						x = ev.layerX-c.offsetLeft;
+						y = ev.layerY-c.offsetTop;
+					} else if (ev.offsetX || ev.offsetX == 0) { 
+						x = ev.offsetX-c.offsetLeft;	
+						y = ev.offsetY-c.offsetTop;
+					}
+
+					return {x: x, y: y};
+				}
+
+				c.addEventListener('click', function(ev){
+
+					var location=new Array("ShangHai","DaLain","WuHan","TaiWan","ChenDu","ShenZhen","BeiJing");
+					p = getEventPosition(ev);
+
+					ctx.restore();
+					for (var i=0;i<6;i++){
+						ctx.beginPath();
+						ctx.arc(x+a*r*Math.cos(ii+jj*i),y-a*r*Math.sin(ii+jj*i),6*r,-Math.PI*2*(i+1)/6,-Math.PI*2*i/6,false);
+						ctx.arc(x+a*r*Math.cos(ii+jj*i),y-a*r*Math.sin(ii+jj*i),2*r,-Math.PI*2*i/6,-Math.PI*2*(i+1)/6,true);
+						ctx.closePath();
+						if(ctx.isPointInPath(p.x, p.y)){
+							init2();
+						}, false);
+
+					</script>
+				</body>
+				</html>
